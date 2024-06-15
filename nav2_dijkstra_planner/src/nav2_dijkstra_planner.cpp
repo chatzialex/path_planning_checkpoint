@@ -1,5 +1,6 @@
 
 #include "nav2_util/node_utils.hpp"
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <string>
@@ -300,6 +301,23 @@ bool DijkstraGlobalPlanner::dijkstraShortestPath(
 
   /** YOUR CODE STARTS HERE */
 
+  while (!open_list.empty()) {
+
+    const auto it_to_current_node{std::min_element(
+        open_list.begin(), open_list.end(),
+        [](const std::pair<int, double> &a, const std::pair<int, double> &b) {
+          return a.second < b.second;
+        })};
+    current_node = it_to_current_node->first;
+    open_list.erase(it_to_current_node);
+
+    closed_list.insert(current_node);
+    if (current_node == goal_cell_index) {
+      path_found = true;
+      break;
+    }
+    const auto neighbors{find_neighbors(current_node, costmap_flat)};
+  }
   /** YOUR CODE ENDS HERE */
 
   return true;
