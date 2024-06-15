@@ -316,7 +316,34 @@ bool DijkstraGlobalPlanner::dijkstraShortestPath(
       path_found = true;
       break;
     }
+
     const auto neighbors{find_neighbors(current_node, costmap_flat)};
+
+    for (const auto &[neighbor_index, step_cost] : neighbors) {
+      if (closed_list.count(neighbor_index)) {
+        continue;
+      }
+
+      const double g_cost{g_costs[current_node] + step_cost};
+
+      const auto it{
+          std::find_if(open_list.begin(), open_list.end(),
+                       [neighbor_index](const std::pair<int, double> &e) {
+                         return neighbor_index == e.first;
+                       })};
+
+      if (it != open_list.end()) {
+        if (g_cost < g_costs[neighbor_index]) {
+          g_costs[neighbor_index] = g_cost;
+          parents[neighbor_index] = current_node;
+          it->second = g_cost;
+        }
+      } else {
+        g_costs[neighbor_index] = g_cost;
+        parents[neighbor_index] = current_node;
+        open_list.push_back({neighbor_index, g_cost});
+      }
+    }
   }
   /** YOUR CODE ENDS HERE */
 
