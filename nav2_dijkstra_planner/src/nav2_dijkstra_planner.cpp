@@ -345,6 +345,18 @@ bool DijkstraGlobalPlanner::dijkstraShortestPath(
       }
     }
   }
+
+  if (path_found) {
+    shortest_path.clear();
+    current_node = goal_cell_index;
+    while (current_node != start_cell_index) {
+      shortest_path.push_back(current_node);
+      current_node = parents[current_node];
+    }
+    std::reverse(shortest_path.begin(), shortest_path.end());
+  } else {
+    return false;
+  }
   /** YOUR CODE ENDS HERE */
 
   return true;
