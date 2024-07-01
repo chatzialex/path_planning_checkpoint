@@ -113,7 +113,7 @@ DijkstraGlobalPlanner::find_neighbors(const int &current_node_index,
   int right = current_node_index + 1;
   // exclude 'right' neighbor if in the first costmap column
   // and exclude it if beyond the max costmap size
-  if (right % width_ != 0 && right >= width_ * height_) {
+  if (right % width_ != 0 && right < width_ * height_) {
     if (costmap_flat[right] < lethal_cost) {
       double step_cost = resolution_ + costmap_flat[right] / 255.0;
       detected_neighbors.insert({right, step_cost});
